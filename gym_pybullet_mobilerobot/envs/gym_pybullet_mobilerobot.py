@@ -6,11 +6,15 @@ import gym
 from gym import spaces
 from gym.utils import seeding
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 p.connect(p.DIRECT)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
 p.configureDebugVisualizer(p.COV_ENABLE_SEGMENTATION_MARK_PREVIEW,0)
 p.configureDebugVisualizer(p.COV_ENABLE_DEPTH_BUFFER_PREVIEW,0)
 p.configureDebugVisualizer(p.COV_ENABLE_RGB_BUFFER_PREVIEW,0)
+
 
 MAX_STEPS = 1500
 
@@ -49,6 +53,18 @@ class MobileRoboGymEnv(helper,gym.Env):
         self.action_space = spaces.Box(low=np.array([0.0, -0.5]) ,high=np.array([1.0, 0.5]), dtype=np.float32)
         self.observation_space = spaces.Box(low=obs_low , high=obs_high, dtype=np.float32)
         self.seed()
+
+        fig = plt.figure(figsize=(3, 3))
+        self.ax  = fig.add_subplot(1, 1, 1)
+        self.count_collision, self.count_overtime, self.count_goal,  = 0,0,0
+
+        self.ax.bar(x=[1, 2, 3],
+               height=[self.count_collision, self.count_overtime, self.count_goal],
+               color=['red', 'green', 'blue'],
+               tick_label=['count_collision', 'count_time', 'count_goal'],
+               width=0.7)
+
+
 
     def reset(self):
         p.resetSimulation()
@@ -103,11 +119,13 @@ class MobileRoboGymEnv(helper,gym.Env):
             print('Collision')
             print("---------------------------------------")
             done = True
+            self.count_collision +=1
 
         elif dist <= 0.4:   # reached target
             reward = 500
             print('............Goal................')
             done = True
+            self.count_goal +=1
 
         elif dist_rate > 0:
             reward = 200.*dist_rate
