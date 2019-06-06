@@ -108,11 +108,13 @@ class MobileRoboGymEnv(helper,gym.Env):
             print('Collision')
             print("---------------------------------------")
             done = True
+            self.count_collision += 1
 
         elif dist <= 0.4:   # reached target
             reward = 500
             print('............Goal................')
             done = True
+            self.count_collision += 1
 
         elif dist_rate > 0:
             reward = 200.*dist_rate
