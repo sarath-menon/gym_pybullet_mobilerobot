@@ -16,6 +16,34 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import os
+import sys
+
+# Make sure spinup is accessible without going through setup.py
+dirname = os.path.dirname
+sys.path.insert(0, dirname(dirname(__file__)))
+
+# Mock mpi4py to get around having to install it on RTD server (which fails)
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+MOCK_MODULES = ['mpi4py']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+# Finish imports
+import spinup
+from recommonmark.parser import CommonMarkParser
+
+
+source_parsers = {
+    '.md': CommonMarkParser,
+}
+
+
 
 # -- Project information -----------------------------------------------------
 
@@ -42,6 +70,12 @@ extensions = ['sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon']
+
+#'sphinx.ext.mathjax', ??
+
+# imgmath settings
+imgmath_image_format = 'svg'
+imgmath_font_size = 14
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -71,8 +105,10 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = 'default' #'sphinx'
 
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = False
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -134,6 +170,7 @@ latex_elements = {
     # 'figure_align': 'htbp',
 }
 
+
 imgmath_latex_preamble = r'''
 \usepackage{algorithm}
 \usepackage{algorithmic}
@@ -155,7 +192,6 @@ imgmath_latex_preamble = r'''
 
 \newcommand{\Epi}[1]{\underset{\begin{subarray}{c}\tau \sim \pi \end{subarray}}{\E}\left[ #1 \right]}
 '''
-
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
@@ -185,6 +221,9 @@ texinfo_documents = [
      author, 'gym_pybullet_mobilerobot', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+def setup(app):
+    app.add_stylesheet('css/modify.css')
 
 
 # -- Options for Epub output -------------------------------------------------
