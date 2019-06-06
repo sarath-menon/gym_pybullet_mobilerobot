@@ -28,7 +28,7 @@ class helper():
 		return np.array([self.max_x/2, self.max_x/2])
 
 	def load_walls(self):
-		print('1234:',self.wall_urdf)
+		# print('1234:',self.wall_urdf)
 		plane = p.loadURDF(dirPath +'/data/plane.urdf')
 		red, green, blue = [0.8, 0, 0, 1], [0, 0.8, 0, 1], [0, 0, 0.8, 1]
 
@@ -69,7 +69,7 @@ class helper():
 	def differential_drive(self,action ,L=0.22,R=0.076,speed=10):
 		# L=distance between wheels, R=wheel radius
 		# action[0]=linear vel , action[1] = angular vel
-		print('yes')
+		# print('yes')
 		rightWheelVelocity = 0.
 		leftWheelVelocity = 0.
 		# rightWheelVelocity += (2*action[0] + action[1]*L) / 2*R
