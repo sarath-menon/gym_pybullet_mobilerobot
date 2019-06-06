@@ -84,11 +84,12 @@ class MobileRoboGymEnv(helper,gym.Env):
         goal_angle = np.arctan2(self.target[1] - trans[1], self.target[0] - trans[0]) *(180/np.pi)
         heading = goal_angle - yaw
 
-        # for _ in range(50):
-        p.stepSimulation()
+        for _ in range(10):
+            p.stepSimulation()
         obs = self.read_laser_scan()
         # print("Robot reset")
         # print('shape:',obs.shape,dist.shape)
+        plt.show()
         return np.concatenate((obs, self.prev_action, dist,heading),axis=None)
 
     def step(self,action):
