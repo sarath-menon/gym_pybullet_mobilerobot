@@ -5,7 +5,6 @@ import time
 import gym
 from gym import spaces
 from gym.utils import seeding
-from gym.envs.classic_control import rendering
 
 p.connect(p.DIRECT)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
@@ -42,7 +41,6 @@ class MobileRoboGymEnv(helper,gym.Env):
     """
     def __init__(self):
         helper.__init__(self)
-        self.viewer = rendering.SimpleImageViewer()
         self.prev_dist = 0.0
         self.prev_action = np.array([0.,0.])
         obs_high = np.concatenate((np.array([50.] * 10) ,np.array([10.0, 10.0]), np.array([6.]), np.array([4]) ))
@@ -50,6 +48,7 @@ class MobileRoboGymEnv(helper,gym.Env):
         self.action_space = spaces.Box(low=np.array([0.0, -0.5]) ,high=np.array([1.0, 0.5]), dtype=np.float32)
         self.observation_space = spaces.Box(low=obs_low , high=obs_high, dtype=np.float32)
         self.count_collision, self.count_overtime, self.count_goal  = 0,0,0
+        self.viewer = None
 
         self.seed()
 
@@ -130,6 +129,9 @@ class MobileRoboGymEnv(helper,gym.Env):
     def render(self, mode="rgb_array", close=False):
         if mode != "rgb_array":
           return np.array([])
+        from gym.envs.classic_control import rendering
+        if self.viewer is None:
+                self.viewer = rendering.SimpleImageViewer()
         base_pos = [2,1.4,3.5]
         view_matrix = p.computeViewMatrixFromYawPitchRoll(
             cameraTargetPosition=base_pos,
