@@ -111,12 +111,6 @@ class MobileRoboGymEnv(helper,gym.Env):
             print("---------------------------------------")
             done = True
 
-        elif dist <= 0.4:   # reached target
-            reward = 500
-            self.target = self.load_target(trans)
-            print('............Goal................')
-
-
 
         elif dist_rate > 0:
             reward = 200.*dist_rate
@@ -124,6 +118,11 @@ class MobileRoboGymEnv(helper,gym.Env):
         elif dist_rate <= 0:
             reward = -8.
             # print('reward:',reward)
+
+        elif dist <= 0.4:   # reached target
+            reward = 500
+            self.target = self.load_target(trans)
+            print('............Goal................')    
 
         else:
             print("Some error")
