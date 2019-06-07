@@ -5,6 +5,7 @@ import time
 import gym
 from gym import spaces
 from gym.utils import seeding
+from gym.envs.classic_control import rendering
 
 p.connect(p.DIRECT)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
@@ -41,7 +42,7 @@ class MobileRoboGymEnv(helper,gym.Env):
     """
     def __init__(self):
         helper.__init__(self)
-        self.lastLidarTime = time.time()
+        self.viewer = rendering.SimpleImageViewer()
         self.prev_dist = 0.0
         self.prev_action = np.array([0.,0.])
         obs_high = np.concatenate((np.array([50.] * 10) ,np.array([10.0, 10.0]), np.array([6.]), np.array([4]) ))
@@ -86,7 +87,7 @@ class MobileRoboGymEnv(helper,gym.Env):
         self.prev_action = action
         p.setJointMotorControl2(self.robot_uid,0,p.VELOCITY_CONTROL,targetVelocity=action[0],force=1000)
         p.setJointMotorControl2(self.robot_uid,1,p.VELOCITY_CONTROL,targetVelocity=action[1],force=1000)
-        for _ in range(5):
+        for _ in range(10):
             p.stepSimulation()
         # time.sleep(0.0001)
         # self._env_step_counter += 1
@@ -108,13 +109,11 @@ class MobileRoboGymEnv(helper,gym.Env):
             print('Collision')
             print("---------------------------------------")
             done = True
-            self.count_collision += 1
 
         elif dist <= 0.4:   # reached target
             reward = 500
             print('............Goal................')
             done = True
-            self.count_collision += 1
 
         elif dist_rate > 0:
             reward = 200.*dist_rate
@@ -127,3 +126,29 @@ class MobileRoboGymEnv(helper,gym.Env):
             print("Some error")
 
         return np.concatenate((obs,self.prev_action,dist, heading),axis=None) , reward , done ,{}
+
+    def render(self, mode="rgb_array", close=False):
+        if mode != "rgb_array":
+          return np.array([])
+        base_pos = [2,1.4,3.5]
+        view_matrix = p.computeViewMatrixFromYawPitchRoll(
+            cameraTargetPosition=base_pos,
+            distance=1.0,
+            yaw= 0,
+            pitch= -80,
+            roll=0,
+            upAxisIndex=2)
+        proj_matrix = p.computeProjectionMatrixFOV(fov=60,
+                                                                       aspect=float(480) /
+                                                                       480,
+                                                                       nearVal=0.1,
+                                                                       farVal=100.0)
+        (_, _, px, _,
+         _) = p.getCameraImage(width=480,
+                                                   height=480,
+                                                   viewMatrix=view_matrix,
+                                                   projectionMatrix=proj_matrix,
+                                                   renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        rgb_array = np.array(px)
+        rgb_array = rgb_array[:, :, :3]
+        self.viewer.imshow(rgb_array)
