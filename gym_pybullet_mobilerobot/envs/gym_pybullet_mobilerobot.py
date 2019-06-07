@@ -154,3 +154,8 @@ class MobileRoboGymEnv(helper,gym.Env):
         rgb_array = np.array(px)
         rgb_array = rgb_array[:, :, :3]
         self.viewer.imshow(rgb_array)
+        
+     def close(self):
+        if self.viewer is not None:
+            self.viewer.close()
+            self.viewer = None    
