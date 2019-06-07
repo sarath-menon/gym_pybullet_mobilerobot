@@ -4,6 +4,7 @@ import pybullet as p
 import time
 import gym
 from gym import spaces
+from gym.envs.classic_control import rendering
 from gym.utils import seeding
 
 p.connect(p.DIRECT)
@@ -39,6 +40,7 @@ class MobileRoboGymEnv(helper,gym.Env):
     :param fpv: (bool) enable first person view camera
     :param srl_model: (str) The SRL_model used
     """
+    metadata = {'render.modes': ['human', 'rgb_array']}
     def __init__(self):
         helper.__init__(self)
         self.prev_dist = 0.0
@@ -126,12 +128,7 @@ class MobileRoboGymEnv(helper,gym.Env):
 
         return np.concatenate((obs,self.prev_action,dist, heading),axis=None) , reward , done ,{}
 
-    def render(self, mode="rgb_array", close=False):
-        if mode != "rgb_array":
-          return np.array([])
-        from gym.envs.classic_control import rendering
-        if self.viewer is None:
-                self.viewer = rendering.SimpleImageViewer()
+    def render(self, mode='human'):
         base_pos = [2,1.4,3.5]
         view_matrix = p.computeViewMatrixFromYawPitchRoll(
             cameraTargetPosition=base_pos,
@@ -153,9 +150,20 @@ class MobileRoboGymEnv(helper,gym.Env):
                                                    renderer=p.ER_BULLET_HARDWARE_OPENGL)
         rgb_array = np.array(px)
         rgb_array = rgb_array[:, :, :3]
-        self.viewer.imshow(rgb_array)
-        
+
+
+        if mode == "rgb_array":
+            return rgb_array
+
+        elif mode == 'human':
+            print('yes')
+            if self.viewer is None:
+                self.viewer = rendering.SimpleImageViewer()
+            self.viewer.imshow(rgb_array)
+            return self.viewer.isopen
+
+
     def close(self):
         if self.viewer is not None:
             self.viewer.close()
-            self.viewer = None    
+            self.viewer = None
