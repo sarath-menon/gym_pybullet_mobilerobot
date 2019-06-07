@@ -156,6 +156,6 @@ class MobileRoboGymEnv(helper,gym.Env):
         self.viewer.imshow(rgb_array)
         
      def close(self):
-        if self.viewer is not None:
-            self.viewer.close()
-            self.viewer = None    
+         if self.viewer is not None:
+             self.viewer.close()
+             self.viewer = None    
