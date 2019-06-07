@@ -119,13 +119,10 @@ class MobileRoboGymEnv(helper,gym.Env):
             reward = -8.
             # print('reward:',reward)
 
-        elif dist <= 0.4:   # reached target
+        if dist <= 0.4:   # reached target
             reward = 500
             self.target = self.load_target(trans)
-            print('............Goal................')    
-
-        else:
-            print("Some error")
+            print('............Goal................')
 
         return np.concatenate((obs,self.prev_action,dist, heading),axis=None) , reward , done ,{}
 
