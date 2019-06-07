@@ -156,7 +156,6 @@ class MobileRoboGymEnv(helper,gym.Env):
             return rgb_array
 
         elif mode == 'human':
-            print('yes')
             if self.viewer is None:
                 self.viewer = rendering.SimpleImageViewer()
             self.viewer.imshow(rgb_array)
