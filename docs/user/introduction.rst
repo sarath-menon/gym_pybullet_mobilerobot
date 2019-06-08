@@ -50,7 +50,9 @@ learning has made end-to-end trainable models possible.
 Well, that may be but probabilistic robotics is quite popular and have been known to work well.
 What significant improvements can end-to-end trainable models offer over proven conventional methods?
 
-- *Learning from experience :* Conventional models cannot learn from failures or any past experiecne for that matter. Additionally, merging individual modules to produce complete robot navigation systems requires years of domain experience, extensive modelling and considerable programming effort. Prof. Wolfram Burgard, one of the autjods of the bestselling book probabilistic robotics and a key researcher in the field compared probabilistic approaches to carrying a heavy boulder up a hill thinking it would solve the problem but finally when he approached the top, he realized the that it wasn't going to make it. Most importantly, human beings  
+- *Learning from experience :* Conventional models cannot learn from failures or any past experiecne for that matter. Additionally, merging individual modules to produce complete robot navigation systems requires years of domain experience, extensive modelling and considerable programming effort. Prof. Wolfram Burgard, one of the autjods of the bestselling book probabilistic robotics and a key researcher in the field compared probabilistic approaches to carrying a heavy boulder up a hill thinking it would solve the problem but finally when he approached the top, he realized the that it wasn't going to make it. Most importantly, human being is not accquired as programmed modules. Rather, it we learn through numerous interactions with environments to acquire skills which can be transffered to future tasks as well.
+
+
 - an `essay`_ about how to grow into an RL research role,
 - a `curated list`_ of important papers organized by topic,2
 
