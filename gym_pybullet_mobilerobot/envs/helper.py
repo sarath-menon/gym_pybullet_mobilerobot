@@ -48,27 +48,34 @@ class helper():
 		p.changeVisualShape(wall_top, -1, rgbaColor=blue)
 		# walls = [wall_left, wall_bottom, wall_right, wall_top]
 
-	def load_target(self, trans):
+	def load_target(self):
+		trans,rot = p.getBasePositionAndOrientation(self.robot_uid)
 		x_pos = 0.9 * self.max_x
 		y_pos = self.max_y * 3 / 4
 		margin = 0.1 * self.max_x
 		x_pos = np.random.uniform(self.min_x + margin, self.max_x - margin)
 		y_pos = np.random.uniform(self.min_y + margin, self.max_y - margin)
 
-		while np.linalg.norm(np.array([trans[0],trans[1]]) - np.array([x_pos ,y_pos])) < 0.1:
-			print("target too close to robot")
+		while np.linalg.norm(np.array([trans[0],trans[1]]) - np.array([x_pos ,y_pos])) < 0.2:
+			print("Target too close to robot -> Resetting")
 			x_pos = 0.9 * self.max_x
 			y_pos = self.max_y * 3 / 4
 			margin = 0.1 * self.max_x
 			x_pos = np.random.uniform(self.min_x + margin, self.max_x - margin)
 			y_pos = np.random.uniform(self.min_y + margin, self.max_y - margin)
 
-		p.loadURDF(self.target_urdf, [x_pos, y_pos, 0], useFixedBase=True)
+		self.target_cylinder = p.loadURDF(self.target_urdf, [x_pos, y_pos, 0], useFixedBase=True)
 		return np.array([x_pos,y_pos])
+
+	def reset_target(self):
+		p.removeBody(self.target_cylinder)
+		self.target = self.load_target()
+		print("deleted old target")
 
 	def differential_drive(self,action ,L=0.22,R=0.076,speed=10):
 		# L=distance between wheels, R=wheel radius
 		# action[0]=linear vel , action[1] = angular vel
+		# print('yes')
 		rightWheelVelocity = 0.
 		leftWheelVelocity = 0.
 		# rightWheelVelocity += (2*action[0] + action[1]*L) / 2*R

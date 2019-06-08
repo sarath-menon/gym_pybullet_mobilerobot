@@ -66,7 +66,7 @@ class MobileRoboGymEnv(helper,gym.Env):
         self.load_walls()
         self.load_robot()
         trans,rot = p.getBasePositionAndOrientation(self.robot_uid)
-        self.target = self.load_target(trans)
+        self.target = self.load_target()
 
         dist = np.linalg.norm(np.array([trans[0],trans[1]]) - self.target)
         self.rayFrom,self.rayTo = self.init_laserscanner()
@@ -75,12 +75,13 @@ class MobileRoboGymEnv(helper,gym.Env):
         goal_angle = np.arctan2(self.target[1] - trans[1], self.target[0] - trans[0]) *(180/np.pi)
         heading = goal_angle - yaw
 
-        # for _ in range(50):
-        p.stepSimulation()
+        for _ in range(10):
+            p.stepSimulation()
+
         obs = self.read_laser_scan()
         # print("Robot reset")
         # print('shape:',obs.shape,dist.shape)
-        return np.concatenate((obs, self.prev_action, dist,heading),axis=None)
+        return np.concatenate((obs,self.prev_action,heading,dist),axis=None)
 
     def step(self,action):
         done = False
@@ -111,7 +112,6 @@ class MobileRoboGymEnv(helper,gym.Env):
             print("---------------------------------------")
             done = True
 
-
         elif dist_rate > 0:
             reward = 200.*dist_rate
 
@@ -121,10 +121,12 @@ class MobileRoboGymEnv(helper,gym.Env):
 
         if dist <= 0.4:   # reached target
             reward = 500
-            self.target = self.load_target(trans)
+            # Reset target
             print('............Goal................')
+            self.reset_target()
 
-        return np.concatenate((obs,self.prev_action,dist, heading),axis=None) , reward , done ,{}
+
+        return np.concatenate((obs,self.prev_action,heading,dist),axis=None) , reward , done ,{}
 
     def render(self, mode='human'):
         base_pos = [2,1.4,3.5]
