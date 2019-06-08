@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to gym_pybullet_mobilerobot's documentation!
+Spinning up in Deel RL for Mobile Robotics!
 ====================================================
 
 .. image:: images/spinning-up-in-rl.png
 
 .. toctree::
    :maxdepth: 2
-   :caption: User Documentation
+   :caption: Introduction
 
    user/introduction
    user/installation
